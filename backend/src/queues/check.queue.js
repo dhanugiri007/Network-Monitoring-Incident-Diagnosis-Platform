@@ -5,39 +5,34 @@ export const checkQueue = new Queue("network-checks", {
   connection: redisConnection,
 });
 
-// Add/update a repeatable job for a monitor
+// Add/update a repeatable job scheduler for a monitor
 export const scheduleMonitorJob = async (monitor) => {
-  // jobId ties this repeatable schedule to this specific monitor
-  const jobId = `monitor-${monitor.id}`;
+  const schedulerId = `monitor-${monitor.id}`;
 
-  await checkQueue.add(
-    "run-check",
+  await checkQueue.upsertJobScheduler(
+    schedulerId,
+    { every: monitor.intervalSeconds * 1000 }, // repeat pattern
     {
-      monitorId: monitor.id,
-      target: monitor.target,
-      type: monitor.type,
-      port: monitor.port,
-    },
-    {
-      jobId,
-      repeat: {
-        every: monitor.intervalSeconds * 1000, // ms
+      name: "run-check",
+      data: {
+        monitorId: monitor.id,
+        target: monitor.target,
+        type: monitor.type,
+        port: monitor.port,
       },
-      removeOnComplete: 100, // keep last 100 completed jobs, discard rest
-      removeOnFail: 100,
+      opts: {
+        removeOnComplete: 100,
+        removeOnFail: 100,
+      },
     }
   );
 
-  console.log(`Scheduled repeatable job for monitor ${monitor.id} every ${monitor.intervalSeconds}s`);
+  console.log(` Scheduled job scheduler for monitor ${monitor.id} every ${monitor.intervalSeconds}s`);
 };
 
-// Remove a monitor's repeatable job (used on delete/deactivate)
+// Remove a monitor's job scheduler (used on delete/deactivate)
 export const unscheduleMonitorJob = async (monitor) => {
-  const repeatableJobs = await checkQueue.getRepeatableJobs();
-  const job = repeatableJobs.find((j) => j.id === `monitor-${monitor.id}`);
-
-  if (job) {
-    await checkQueue.removeRepeatableByKey(job.key);
-    console.log(`Removed repeatable job for monitor ${monitor.id}`);
-  }
+  const schedulerId = `monitor-${monitor.id}`;
+  await checkQueue.removeJobScheduler(schedulerId);
+  console.log(` Removed job scheduler for monitor ${monitor.id}`);
 };

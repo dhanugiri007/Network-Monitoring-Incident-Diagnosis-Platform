@@ -2,6 +2,7 @@ import { Worker } from "bullmq";
 import { redisConnection } from "../config/redis.js";
 import { runDiagnosis } from "../services/diagnosis.service.js";
 import { CheckResult } from "../models/index.js";
+import { evaluateIncident } from "../services/incident.service.js";
 
 export const checkWorker = new Worker(
   "network-checks",
@@ -10,29 +11,30 @@ export const checkWorker = new Worker(
 
     console.log(`Running check for monitor ${monitorId} (${target})`);
 
-    const result = await runDiagnosis({ target, type, port });
+    const diagnosisResult = await runDiagnosis({ target, type, port });
 
-    // Save result to MySQL
-    await CheckResult.create({
+    const checkResult = await CheckResult.create({
       monitorId,
-      status: result.status,
-      failureType: result.failureType || null,
-      responseTimeMs: result.responseTimeMs,
-      httpStatusCode: result.httpStatusCode || null,
-      errorMessage: result.errorMessage || null,
+      status: diagnosisResult.status,
+      failureType: diagnosisResult.failureType || null,
+      responseTimeMs: diagnosisResult.responseTimeMs,
+      httpStatusCode: diagnosisResult.httpStatusCode || null,
+      errorMessage: diagnosisResult.errorMessage || null,
     });
 
     console.log(
-      `${result.status === "SUCCESS" ? "✅" : "❌"} Monitor ${monitorId}: ${result.status}${
-        result.failureType ? ` (${result.failureType})` : ""
-      } — ${result.responseTimeMs}ms`
+      `${diagnosisResult.status === "SUCCESS" ? "✅" : "❌"} Monitor ${monitorId}: ${diagnosisResult.status}${
+        diagnosisResult.failureType ? ` (${diagnosisResult.failureType})` : ""
+      } — ${diagnosisResult.responseTimeMs}ms`
     );
 
-    return result;
+    await evaluateIncident(monitorId, checkResult);
+
+    return diagnosisResult;
   },
   {
     connection: redisConnection,
-    concurrency: 10, // process up to 10 checks in parallel
+    concurrency: 10,
   }
 );
 
