@@ -3,11 +3,11 @@ import dns from "dns/promises";
 export const checkDns = async (hostname) => {
   const start = Date.now();
   try {
-    const addresses = await dns.resolve4(hostname);
+    const result = await dns.lookup(hostname);
     return {
       success: true,
       responseTimeMs: Date.now() - start,
-      addresses,
+      addresses: [result.address],
     };
   } catch (err) {
     return {
