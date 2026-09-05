@@ -2,9 +2,16 @@
 
 import { useMonitors } from "../hooks/useMonitors";
 import MonitorForm from "./MonitorForm";
+import { monitorApi } from "../services/monitor.api";
 
 export default function MonitorList() {
   const { monitors, loading, error, refetch } = useMonitors();
+
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this monitor?")) return;
+    await monitorApi.delete(id);
+    refetch();
+  };
 
   return (
     <div>
@@ -26,6 +33,10 @@ export default function MonitorList() {
             <strong>{monitor.name}</strong> — {monitor.target} ({monitor.type})
             <br />
             Interval: {monitor.intervalSeconds}s | Active: {monitor.isActive ? "Yes" : "No"}
+            <br />
+            <a href={`/monitors/${monitor.id}`}>View Details</a>
+            {" | "}
+            <button onClick={() => handleDelete(monitor.id)}>Delete</button>
           </li>
         ))}
       </ul>
