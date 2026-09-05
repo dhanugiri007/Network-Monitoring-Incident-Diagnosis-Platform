@@ -20,7 +20,7 @@ Monitor.belongsToMany(Monitor, {
 
 export const syncModels = async () => {
   await sequelize.sync({ alter: true });
-  console.log("Models synced to MySQL");
+  console.log("Models synced to PostgreSQL");
 };
 
 export { Monitor, CheckResult, Incident, Dependency };

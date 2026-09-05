@@ -9,7 +9,7 @@ export const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: "mysql",
+    dialect: "postgres",
     logging: false,
   }
 );
@@ -17,9 +17,9 @@ export const sequelize = new Sequelize(
 export const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log("MySQL connected");
+    console.log("PostgresSQL connected");
   } catch (err) {
-    console.error("MySQL connection failed:", err.message);
+    console.error("PostgresSQL connection failed:", err.message);
     process.exit(1);
   }
 };
