@@ -1,19 +1,24 @@
 "use client";
 
 import { useMonitors } from "../hooks/useMonitors";
+import MonitorForm from "./MonitorForm";
 
 export default function MonitorList() {
   const { monitors, loading, error, refetch } = useMonitors();
 
-  if (loading) return <p>Loading monitors...</p>;
-  if (error) return <p>Error: {error}</p>;
-
   return (
     <div>
       <h2>Monitors</h2>
+
+      <MonitorForm onCreated={refetch} />
+
+      <hr />
+
       <button onClick={refetch}>Refresh</button>
 
-      {monitors.length === 0 && <p>No monitors yet.</p>}
+      {loading && <p>Loading monitors...</p>}
+      {error && <p>Error: {error}</p>}
+      {!loading && monitors.length === 0 && <p>No monitors yet.</p>}
 
       <ul>
         {monitors.map((monitor) => (
