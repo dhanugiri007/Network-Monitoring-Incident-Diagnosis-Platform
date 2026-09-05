@@ -23,7 +23,7 @@ export const checkWorker = new Worker(
     });
 
     console.log(
-      `${diagnosisResult.status === "SUCCESS" ? "✅" : "❌"} Monitor ${monitorId}: ${diagnosisResult.status}${
+      `Monitor ${monitorId}: ${diagnosisResult.status}${
         diagnosisResult.failureType ? ` (${diagnosisResult.failureType})` : ""
       } — ${diagnosisResult.responseTimeMs}ms`
     );
