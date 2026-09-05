@@ -7,7 +7,7 @@ import { useMonitors } from "@/features/monitors/hooks/useMonitors";
 
 export default function TopologyView() {
   const { status, dependencies, loading, error, refetch } = useTopology();
-  const { monitors } = useMonitors(); // to populate dropdowns
+  const { monitors } = useMonitors();
 
   const [parentId, setParentId] = useState("");
   const [childId, setChildId] = useState("");
@@ -42,80 +42,86 @@ export default function TopologyView() {
   };
 
   if (loading) return <p>Loading topology...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p className="error-text">Error: {error}</p>;
 
   return (
     <div>
-      <h2>Network Topology</h2>
-      <button onClick={refetch}>Refresh</button>
-
-      <h3>Currently Down (with affected services)</h3>
+      <h1>NETWORK TOPOLOGY</h1>
+      <button className="btn" onClick={refetch}>REFRESH</button>
+      <h2>CURRENTLY DOWN</h2>
       {status.length === 0 && <p>No ongoing incidents — everything healthy.</p>}
-      <ul>
+      <div className="card-grid">
         {status.map((entry, idx) => (
-          <li key={idx}>
-            <strong>{entry.downMonitor.name}</strong> ({entry.downMonitor.target}) — DOWN since{" "}
-            {new Date(entry.startedAt).toLocaleString()} ({entry.failureType})
+          <div key={idx} className="card is-down">
+            <div className="card-header">
+              <span className="card-title">{entry.downMonitor.name}</span>
+              <span className="tag tag-tls">{entry.failureType}</span>
+            </div>
+            <div className="card-meta">{entry.downMonitor.target}</div>
+            <div className="card-meta">Down since {new Date(entry.startedAt).toLocaleString()}</div>
             {entry.potentiallyAffected.length > 0 ? (
-              <ul>
+              <ul className="pixel-list">
                 {entry.potentiallyAffected.map((affected) => (
                   <li key={affected.id}>
-                    ⚠️ Potentially affected: {affected.name} ({affected.target})
+                    <span className="status-dot warn"></span>
+                    {affected.name} ({affected.target})
                   </li>
                 ))}
               </ul>
             ) : (
-              <p>No dependent services.</p>
+              <p className="card-meta">No dependent services.</p>
             )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
 
-      <hr />
+      <div className="panel">
+        <h3>DEFINE A DEPENDENCY</h3>
+        <p style={{ color: "var(--text-dim)" }}>
+          Child monitor depends on Parent monitor (if Parent goes down, Child may be affected)
+        </p>
+        <form onSubmit={handleCreate}>
+          <div className="field">
+            <label>Parent (the one that could go down)</label>
+            <select value={parentId} onChange={(e) => setParentId(e.target.value)} required>
+              <option value="">-- select --</option>
+              {monitors.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name} ({m.target})
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <h3>Define a Dependency</h3>
-      <p>Child monitor depends on Parent monitor (if Parent goes down, Child may be affected)</p>
-      <form onSubmit={handleCreate}>
-        <div>
-          <label>Parent (the one that could go down): </label>
-          <select value={parentId} onChange={(e) => setParentId(e.target.value)} required>
-            <option value="">-- select --</option>
-            {monitors.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name} ({m.target})
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="field">
+            <label>Child (depends on parent)</label>
+            <select value={childId} onChange={(e) => setChildId(e.target.value)} required>
+              <option value="">-- select --</option>
+              {monitors.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name} ({m.target})
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <label>Child (depends on parent): </label>
-          <select value={childId} onChange={(e) => setChildId(e.target.value)} required>
-            <option value="">-- select --</option>
-            {monitors.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name} ({m.target})
-              </option>
-            ))}
-          </select>
-        </div>
+          <button className="btn" type="submit" disabled={submitting}>
+            {submitting ? "LINKING..." : "CREATE DEPENDENCY"}
+          </button>
 
-        <button type="submit" disabled={submitting}>
-          {submitting ? "Linking..." : "Create Dependency"}
-        </button>
+          {formError && <p className="error-text">{formError}</p>}
+        </form>
+      </div>
 
-        {formError && <p style={{ color: "red" }}>{formError}</p>}
-      </form>
-
-      <hr />
-
-      <h3>All Dependency Links</h3>
+      <h2>ALL DEPENDENCY LINKS</h2>
       {dependencies.length === 0 && <p>No dependencies defined yet.</p>}
-      <ul>
+      <ul className="pixel-list">
         {dependencies.map((dep) => (
           <li key={dep.id}>
             Monitor #{dep.childMonitorId} depends on Monitor #{dep.parentMonitorId}{" "}
-            <button onClick={() => handleDelete(dep.id)}>Remove</button>
+            <button className="btn btn-danger" onClick={() => handleDelete(dep.id)}>
+              REMOVE
+            </button>
           </li>
         ))}
       </ul>

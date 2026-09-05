@@ -1,1 +1,257 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap");
+
+:root {
+  --bg: #0d0d1a;
+  --panel: #16162b;
+  --grid: #24243f;
+  --green: #39ff14;
+  --pink: #ff3fa4;
+  --yellow: #ffe14d;
+  --cyan: #4de8ff;
+  --text: #e8e8f4;
+  --text-dim: #8888aa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--text);
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  margin: 0;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: "Press Start 2P", monospace;
+  line-height: 1.6;
+}
+
+h1 { font-size: 20px; color: var(--yellow); }
+h2 { font-size: 16px; color: var(--cyan); margin-top: 24px; }
+h3 { font-size: 13px; color: var(--pink); margin-top: 20px; }
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Nav bar */
+.page-nav {
+  background: var(--panel);
+  border-bottom: 4px solid var(--pink);
+  padding: 16px 20px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+  display: flex;
+  gap: 20px;
+}
+.page-nav a {
+  color: var(--green);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 32px 60px;
+}
+
+/* Panels */
+.panel {
+  background: var(--panel);
+  border: 3px solid var(--cyan);
+  box-shadow: 5px 5px 0 var(--grid);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-box {
+  background: var(--panel);
+  border: 3px solid var(--grid);
+  box-shadow: 4px 4px 0 var(--grid);
+  padding: 16px;
+  text-align: center;
+}
+.stat-number {
+  font-family: "Press Start 2P", monospace;
+  font-size: 28px;
+  color: var(--yellow);
+  display: block;
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 15px;
+  color: var(--text-dim);
+}
+
+/* Card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: var(--panel);
+  border: 3px solid var(--grid);
+  box-shadow: 5px 5px 0 var(--grid);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card.is-down {
+  border-color: var(--pink);
+  box-shadow: 5px 5px 0 var(--pink);
+}
+.card.is-up {
+  border-color: var(--green);
+  box-shadow: 5px 5px 0 var(--green);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.card-title {
+  font-size: 22px;
+  color: var(--text);
+}
+.card-meta {
+  color: var(--text-dim);
+  font-size: 16px;
+}
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 2px solid var(--grid);
+}
+
+/* Type tags */
+.tag {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  padding: 4px 6px;
+  border: 2px solid;
+  white-space: nowrap;
+}
+.tag-http { color: var(--cyan); border-color: var(--cyan); }
+.tag-dns { color: var(--yellow); border-color: var(--yellow); }
+.tag-tcp { color: var(--green); border-color: var(--green); }
+.tag-tls { color: var(--pink); border-color: var(--pink); }
+
+/* Buttons */
+.btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  background: var(--cyan);
+  color: #0d0d1a;
+  border: 3px solid var(--text);
+  box-shadow: 3px 3px 0 var(--grid);
+  padding: 10px 14px;
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--yellow);
+}
+.btn:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+.btn-danger {
+  background: var(--pink);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Forms */
+.field {
+  margin-bottom: 14px;
+}
+.field label {
+  display: block;
+  color: var(--text-dim);
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.field input,
+.field select {
+  width: 100%;
+  max-width: 320px;
+  background: #0d0d1a;
+  color: var(--text);
+  border: 2px solid var(--cyan);
+  padding: 8px;
+  font-family: "VT323", monospace;
+  font-size: 18px;
+}
+
+/* Status blocks */
+.status-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  border: 2px solid var(--text);
+  vertical-align: middle;
+}
+.status-dot.success { background: var(--green); }
+.status-dot.fail { background: var(--pink); }
+.status-dot.warn { background: var(--yellow); }
+
+/* Badges */
+.badge {
+  display: inline-block;
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  padding: 4px 8px;
+  border: 2px solid;
+}
+.badge.ongoing { color: var(--pink); border-color: var(--pink); }
+.badge.resolved { color: var(--green); border-color: var(--green); }
+
+/* Lists */
+.pixel-list {
+  list-style: none;
+  padding: 0;
+}
+.pixel-list li {
+  margin-bottom: 4px;
+}
+
+.error-text {
+  color: var(--pink);
+  font-family: "VT323", monospace;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}

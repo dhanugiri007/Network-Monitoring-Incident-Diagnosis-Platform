@@ -9,12 +9,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <nav>
-  <a href="/monitors">Monitors</a> | <a href="/incidents">Incidents</a> |{" "}
-  <a href="/topology">Topology</a>
+        <nav className="page-nav">
+  <a href="/">HOME</a>
+  <a href="/monitors">MONITORS</a>
+  <a href="/incidents">INCIDENTS</a>
+  <a href="/topology">TOPOLOGY</a>
 </nav>
-        <hr />
-        {children}
+        <div className="container">{children}</div>
       </body>
     </html>
   );

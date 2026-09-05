@@ -29,7 +29,7 @@ export default function MonitorForm({ onCreated }) {
         intervalSeconds: Number(form.intervalSeconds),
       });
       setForm({ name: "", target: "", type: "HTTP", intervalSeconds: 60 });
-      if (onCreated) onCreated(); // tell parent to refresh list
+      if (onCreated) onCreated();
     } catch (err) {
       setError(err.response?.data?.error || err.message);
     } finally {
@@ -39,20 +39,20 @@ export default function MonitorForm({ onCreated }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Add Monitor</h3>
+      <h3>ADD MONITOR</h3>
 
-      <div>
-        <label>Name: </label>
+      <div className="field">
+        <label>Name</label>
         <input name="name" value={form.name} onChange={handleChange} required />
       </div>
 
-      <div>
-        <label>Target (domain): </label>
+      <div className="field">
+        <label>Target (domain)</label>
         <input name="target" value={form.target} onChange={handleChange} required />
       </div>
 
-      <div>
-        <label>Type: </label>
+      <div className="field">
+        <label>Type</label>
         <select name="type" value={form.type} onChange={handleChange}>
           <option value="DNS">DNS</option>
           <option value="TCP">TCP</option>
@@ -61,8 +61,8 @@ export default function MonitorForm({ onCreated }) {
         </select>
       </div>
 
-      <div>
-        <label>Interval (seconds): </label>
+      <div className="field">
+        <label>Interval (seconds)</label>
         <input
           type="number"
           name="intervalSeconds"
@@ -72,11 +72,11 @@ export default function MonitorForm({ onCreated }) {
         />
       </div>
 
-      <button type="submit" disabled={submitting}>
-        {submitting ? "Creating..." : "Create Monitor"}
+      <button className="btn" type="submit" disabled={submitting}>
+        {submitting ? "CREATING..." : "CREATE MONITOR"}
       </button>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
     </form>
   );
 }
