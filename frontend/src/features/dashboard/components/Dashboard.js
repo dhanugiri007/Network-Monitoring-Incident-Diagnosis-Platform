@@ -1,9 +1,12 @@
 "use client";
 
 import { useDashboard } from "../hooks/useDashboard";
+import { asciiBar } from "@/common/lib/asciiBar";
+import MonitorCharts from "./MonitorCharts";
 
 export default function Dashboard() {
-  const { monitors, incidents, topologyStatus, loading, error, refetch } = useDashboard();
+  const { monitors, incidents, topologyStatus, monitorMetrics, loading, error, refetch } =
+    useDashboard();
 
   if (loading) return <p>Loading dashboard...</p>;
   if (error) return <p className="error-text">Error: {error}</p>;
@@ -24,17 +27,17 @@ export default function Dashboard() {
     <div>
       <h1>NETPULSE DASHBOARD</h1>
 
-      <div className="panel" style={{ textAlign: "center" }}>
-        <span
-          className="stat-number"
-          style={{
-            fontSize: 48,
-            color: healthPercent === 100 ? "var(--green)" : healthPercent > 50 ? "var(--yellow)" : "var(--pink)",
-          }}
+      <div className="panel">
+        <span className="live-dot"></span>
+        <span className="card-meta">SYSTEM HEALTH</span>
+        <div
+          className={`ascii-bar ${
+            healthPercent < 50 ? "crit" : healthPercent < 100 ? "warn" : ""
+          }`}
+          style={{ fontSize: 22, marginTop: 8 }}
         >
-          {healthPercent}%
-        </span>
-        <span className="stat-label">SYSTEM HEALTH</span>
+          {asciiBar(healthPercent)} {healthPercent}%
+        </div>
       </div>
 
       <div className="stats-bar">
@@ -47,7 +50,7 @@ export default function Dashboard() {
           <span className="stat-label">ACTIVE</span>
         </div>
         <div className="stat-box">
-          <span className="stat-number" style={{ color: "var(--pink)" }}>{ongoingIncidents}</span>
+          <span className="stat-number" style={{ color: "var(--red)" }}>{ongoingIncidents}</span>
           <span className="stat-label">ONGOING INCIDENTS</span>
         </div>
         <div className="stat-box">
@@ -55,7 +58,7 @@ export default function Dashboard() {
           <span className="stat-label">RESOLVED INCIDENTS</span>
         </div>
         <div className="stat-box">
-          <span className="stat-number" style={{ color: "var(--yellow)" }}>{affectedCount}</span>
+          <span className="stat-number" style={{ color: "var(--amber)" }}>{affectedCount}</span>
           <span className="stat-label">POTENTIALLY AFFECTED</span>
         </div>
       </div>
@@ -63,6 +66,9 @@ export default function Dashboard() {
       <button className="btn" onClick={refetch} style={{ marginBottom: 24 }}>
         REFRESH
       </button>
+
+      <h2>METRICS OVERVIEW</h2>
+      <MonitorCharts data={monitorMetrics} />
 
       <h2>ACTIVE INCIDENTS</h2>
       {topologyStatus.length === 0 && <p>No ongoing incidents — everything healthy.</p>}
@@ -77,7 +83,7 @@ export default function Dashboard() {
             <div className="card-meta">Down since {new Date(entry.startedAt).toLocaleString()}</div>
             {entry.potentiallyAffected.length > 0 && (
               <div className="card-meta">
-                ⚠️ {entry.potentiallyAffected.length} dependent service(s) affected
+                ⚠ {entry.potentiallyAffected.length} dependent service(s) affected
               </div>
             )}
           </div>
