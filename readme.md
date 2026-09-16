@@ -74,8 +74,7 @@ Services aren't independent — a database going down can take an API and three 
 **Frontend**
 - Next.js (App Router)
 - Feature-based architecture (`features/<domain>/{hooks,services,components}`)
-- Plain CSS, custom retro/pixel-arcade theme
-
+- Plain CSS, custome green and black hacker like theme
 **Deployment**
 - Frontend → Vercel
 - Backend + Worker → Render (Docker)
